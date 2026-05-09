@@ -1,20 +1,21 @@
 import type { Category } from "@/data/professionals";
-import { Wrench, Hammer, Droplet, GraduationCap, Stethoscope, LayoutGrid } from "lucide-react";
+import { Wrench, Hammer, Droplet, GraduationCap, Stethoscope, LayoutGrid, Briefcase } from "lucide-react";
 
-const ICONS: Record<Category, React.ReactNode> = {
+const ICONS: Partial<Record<Category, React.ReactNode>> = {
   Electricians: <Wrench className="h-5 w-5" />,
   Carpenters: <Hammer className="h-5 w-5" />,
   Plumbers: <Droplet className="h-5 w-5" />,
   Teachers: <GraduationCap className="h-5 w-5" />,
   Doctors: <Stethoscope className="h-5 w-5" />,
 };
+const fallbackIcon = <Briefcase className="h-5 w-5" />;
 
 export type CategoryFilter = Category | "All";
 
 export function CategoryBar({ value, onChange, options }: { value: CategoryFilter; onChange: (v: CategoryFilter) => void; options: Category[] }) {
   const all: { key: CategoryFilter; label: string; icon: React.ReactNode }[] = [
     { key: "All", label: "All", icon: <LayoutGrid className="h-5 w-5" /> },
-    ...options.map((o) => ({ key: o, label: o, icon: ICONS[o] })),
+    ...options.map((o) => ({ key: o, label: o, icon: ICONS[o] ?? fallbackIcon })),
   ];
   return (
     <div className="relative -mt-10 z-20 mx-auto w-full max-w-6xl px-4">
