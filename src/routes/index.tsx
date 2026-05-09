@@ -23,10 +23,9 @@ function Landing() {
           Hire trusted local professionals in seconds — or grow your trade business.
         </p>
 
-        <div className="mt-14 grid w-full max-w-5xl gap-6 sm:grid-cols-3">
+        <div className="mt-14 grid w-full max-w-3xl gap-6 sm:grid-cols-2">
           <RoleCard to="/signup" icon={<Briefcase className="h-12 w-12 text-brand" />} title="I'm a Customer" sub="Find & hire" delay="delay-200" />
-          <RoleCard to="/login" icon={<HardHat className="h-12 w-12 text-brand" />} title="I'm a Worker" sub="Login (worker / worker)" delay="delay-300" />
-          <RoleCard to="/login" icon={<Shield className="h-12 w-12 text-brand" />} title="Admin" sub="Login (admin / admin)" delay="delay-500" />
+          <RoleCard to="/login" icon={<HardHat className="h-12 w-12 text-brand" />} title="I'm a Worker" sub="Login to your account" delay="delay-300" />
         </div>
 
         <Link to="/login" className="mt-10 text-white/80 hover:text-brand animate-float-up delay-500">Already have an account? Login</Link>
