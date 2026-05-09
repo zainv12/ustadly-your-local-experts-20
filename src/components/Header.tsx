@@ -44,7 +44,10 @@ export function Header() {
               <LogOut className="h-6 w-6" />
             </button>
           ) : (
-            <Link to="/login" className="rounded-full bg-navy px-4 py-2 text-sm font-semibold text-brand">Login</Link>
+            <>
+              <Link to="/login" className="rounded-full px-4 py-2 text-sm font-semibold text-navy hover:bg-navy/10 transition">Login</Link>
+              <Link to="/signup" className="rounded-full bg-navy px-4 py-2 text-sm font-semibold text-brand hover:scale-105 transition">Sign up</Link>
+            </>
           )}
         </div>
       </div>
