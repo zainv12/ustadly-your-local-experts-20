@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 export type Role = "customer" | "worker" | "admin";
 
 export type Customer = { username: string; password: string; name: string; email: string; phone: string; cnic: string; country: string };
-export type WorkerAccount = { username: string; password: string; name: string; trade: string; country: string; blocked: boolean; earnings: number };
+export type WorkerAccount = { username: string; password: string; name: string; trade: string; country: string; blocked: boolean; earnings: number; verified?: boolean };
 export type Complaint = { id: string; from: string; against: string; subject: string; message: string; createdAt: number; status: "open" | "resolved" };
 export type Session = { role: Role; username: string } | null;
 
@@ -16,7 +16,23 @@ const K = {
 };
 
 const ADMIN = { username: "admin", password: "admin" };
-const WORKER_DEMO: WorkerAccount = { username: "worker", password: "worker", name: "Demo Worker", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 24500 };
+const WORKER_DEMO: WorkerAccount = { username: "worker", password: "worker", name: "Demo Worker", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 24500, verified: true };
+
+const SEED_WORKERS: WorkerAccount[] = [
+  WORKER_DEMO,
+  { username: "ahmad", password: "ahmad123", name: "Ahmad Ali", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 18200, verified: true },
+  { username: "nauman", password: "nauman123", name: "M. Nauman", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 32500, verified: true },
+  { username: "imran", password: "imran123", name: "Imran Khan", trade: "Carpenter", country: "Pakistan", blocked: false, earnings: 15400, verified: true },
+  { username: "yousaf", password: "yousaf123", name: "Yousaf Malik", trade: "Carpenter", country: "Pakistan", blocked: false, earnings: 9800, verified: false },
+  { username: "bilal", password: "bilal123", name: "Bilal Hussain", trade: "Plumber", country: "Pakistan", blocked: false, earnings: 21300, verified: true },
+  { username: "asif", password: "asif123", name: "Asif Raza", trade: "Plumber", country: "Pakistan", blocked: false, earnings: 11200, verified: false },
+  { username: "sara", password: "sara123", name: "Sara Iqbal", trade: "Math Teacher", country: "Pakistan", blocked: false, earnings: 27000, verified: true },
+  { username: "hamza", password: "hamza123", name: "Hamza Sheikh", trade: "English Teacher", country: "Pakistan", blocked: false, earnings: 19500, verified: true },
+  { username: "ayesha", password: "ayesha123", name: "Dr. Ayesha Khan", trade: "General Physician", country: "Pakistan", blocked: false, earnings: 48000, verified: true },
+  { username: "usman", password: "usman123", name: "Dr. Usman Tariq", trade: "Pediatrician", country: "Pakistan", blocked: false, earnings: 52500, verified: true },
+  { username: "zahid", password: "zahid123", name: "Zahid Painter", trade: "Painter", country: "Pakistan", blocked: false, earnings: 7600, verified: false },
+  { username: "tariq", password: "tariq123", name: "Tariq Mechanic", trade: "Mechanic", country: "Pakistan", blocked: true, earnings: 4300, verified: false },
+];
 
 function read<T>(k: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -31,9 +47,12 @@ function write<T>(k: string, v: T) {
 function ensureSeed() {
   if (typeof window === "undefined") return;
   const ws = read<WorkerAccount[]>(K.workers, []);
-  if (!ws.find((w) => w.username === "worker")) {
-    write(K.workers, [WORKER_DEMO, ...ws]);
+  const map = new Map(ws.map((w) => [w.username, w]));
+  let changed = false;
+  for (const seed of SEED_WORKERS) {
+    if (!map.has(seed.username)) { map.set(seed.username, seed); changed = true; }
   }
+  if (changed) write(K.workers, Array.from(map.values()));
 }
 
 type Ctx = {
@@ -48,6 +67,10 @@ type Ctx = {
   resolveComplaint: (id: string) => void;
   blockWorker: (username: string, blocked: boolean) => void;
   removeWorker: (username: string) => void;
+  verifyWorker: (username: string, verified: boolean) => void;
+  resetWorkerPassword: (username: string, newPassword: string) => void;
+  adjustEarnings: (username: string, amount: number) => void;
+  removeCustomer: (username: string) => void;
 };
 
 const AuthCtx = createContext<Ctx | null>(null);
@@ -123,6 +146,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     removeWorker: (u) => {
       const list = read<WorkerAccount[]>(K.workers, []);
       write(K.workers, list.filter((w) => w.username !== u));
+      refresh();
+    },
+    verifyWorker: (u, verified) => {
+      const list = read<WorkerAccount[]>(K.workers, []);
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, verified } : w)));
+      refresh();
+    },
+    resetWorkerPassword: (u, newPassword) => {
+      const list = read<WorkerAccount[]>(K.workers, []);
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, password: newPassword } : w)));
+      refresh();
+    },
+    adjustEarnings: (u, amount) => {
+      const list = read<WorkerAccount[]>(K.workers, []);
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, earnings: Math.max(0, w.earnings + amount) } : w)));
+      refresh();
+    },
+    removeCustomer: (u) => {
+      const list = read<Customer[]>(K.customers, []);
+      write(K.customers, list.filter((c) => c.username !== u));
       refresh();
     },
   }), [session, customers, workers, complaints, refresh]);

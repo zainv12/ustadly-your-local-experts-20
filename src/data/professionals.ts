@@ -2,7 +2,11 @@ import w1 from "@/assets/worker-1.jpg";
 import w2 from "@/assets/worker-2.jpg";
 import w3 from "@/assets/worker-3.jpg";
 
-export type Category = "Electricians" | "Carpenters" | "Plumbers" | "Teachers" | "Doctors";
+export type Category =
+  | "Electricians" | "Carpenters" | "Plumbers" | "Teachers" | "Doctors"
+  | "Painters" | "Mechanics" | "AC Technicians" | "Welders" | "Masons"
+  | "Cleaners" | "Drivers" | "Gardeners" | "Beauticians" | "Cooks"
+  | "Tailors" | "IT Support" | "Movers" | "Tutors" | "Nurses";
 
 export type Professional = {
   id: string;
@@ -83,4 +87,9 @@ export const professionals: Professional[] = [
     languages: ["English", "Urdu"] },
 ];
 
-export const categories: Category[] = ["Electricians", "Carpenters", "Plumbers", "Teachers", "Doctors"];
+export const categories: Category[] = [
+  "Electricians", "Carpenters", "Plumbers", "Teachers", "Doctors",
+  "Painters", "Mechanics", "AC Technicians", "Welders", "Masons",
+  "Cleaners", "Drivers", "Gardeners", "Beauticians", "Cooks",
+  "Tailors", "IT Support", "Movers", "Tutors", "Nurses",
+];

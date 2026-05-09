@@ -37,7 +37,6 @@ function Home() {
           <h1 className="font-display text-5xl md:text-7xl font-black text-brand text-shadow-glow animate-float-up">
             Find Your Pro
           </h1>
-          <p className="mt-3 text-white/80 animate-float-up delay-100">Pick a profession and we'll show you the best near you.</p>
 
           <div className="mt-8 w-full max-w-2xl glass-card rounded-full p-2 flex items-center gap-2 animate-float-up delay-200">
             <select
