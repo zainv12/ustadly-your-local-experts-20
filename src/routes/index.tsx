@@ -24,7 +24,7 @@ function Landing() {
         </p>
 
         <div className="mt-14 grid w-full max-w-3xl gap-6 sm:grid-cols-2">
-          <RoleCard to="/signup" icon={<Briefcase className="h-12 w-12 text-brand" />} title="I'm a Customer" sub="Find & hire" delay="delay-200" />
+          <RoleCard to="/home" icon={<Briefcase className="h-12 w-12 text-brand" />} title="I'm a Customer" sub="Browse pros — no signup needed" delay="delay-200" />
           <RoleCard to="/login" icon={<HardHat className="h-12 w-12 text-brand" />} title="I'm a Worker" sub="Login to your account" delay="delay-300" />
         </div>
 
