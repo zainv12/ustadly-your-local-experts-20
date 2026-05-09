@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { useAuth } from "@/lib/auth";
-import { Ban, CheckCircle2, Trash2, LogOut, Users, MessageSquareWarning, ShieldCheck } from "lucide-react";
+import { Ban, CheckCircle2, Trash2, LogOut, Users, MessageSquareWarning, ShieldCheck, BadgeCheck, KeyRound, Plus, Minus, Search, UserCircle2, DollarSign } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   component: Admin,
@@ -10,14 +10,34 @@ export const Route = createFileRoute("/admin")({
 });
 
 function Admin() {
-  const { session, login, workers, complaints, blockWorker, removeWorker, resolveComplaint, logout } = useAuth();
+  const {
+    session, login, workers, customers, complaints,
+    blockWorker, removeWorker, resolveComplaint, logout,
+    verifyWorker, resetWorkerPassword, adjustEarnings, removeCustomer,
+  } = useAuth();
   const navigate = useNavigate();
   const [u, setU] = useState("");
   const [p, setP] = useState("");
   const [err, setErr] = useState("");
-  const [tab, setTab] = useState<"workers" | "complaints">("workers");
+  const [tab, setTab] = useState<"workers" | "customers" | "complaints">("workers");
+  const [query, setQuery] = useState("");
 
   useEffect(() => { setErr(""); }, [u, p]);
+
+  const open = complaints.filter((c) => c.status === "open").length;
+  const totalEarnings = workers.reduce((s, w) => s + w.earnings, 0);
+
+  const filteredWorkers = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    if (!q) return workers;
+    return workers.filter((w) => [w.name, w.username, w.trade, w.country].some((s) => s.toLowerCase().includes(q)));
+  }, [workers, query]);
+
+  const filteredCustomers = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    if (!q) return customers;
+    return customers.filter((c) => [c.name, c.username, c.email, c.country].some((s) => s.toLowerCase().includes(q)));
+  }, [customers, query]);
 
   if (!session || session.role !== "admin") {
     return (
@@ -41,49 +61,88 @@ function Admin() {
     );
   }
 
-  const open = complaints.filter((c) => c.status === "open").length;
-
   return (
     <ToolsBackground overlay="bg-navy/75">
       <div className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="font-display text-4xl font-black text-brand inline-flex items-center gap-3"><ShieldCheck /> Admin Panel</h1>
-            <p className="text-white/70">Manage workers and customer complaints</p>
+            <p className="text-white/70">Manage workers, customers, and complaints</p>
           </div>
           <button onClick={() => { logout(); navigate({ to: "/" }); }} className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-white hover:bg-white/25 transition">
             <LogOut className="h-4 w-4" /> Logout
           </button>
         </div>
 
-        <div className="mt-8 flex gap-2">
+        <div className="mt-6 grid gap-3 sm:grid-cols-4">
+          <Stat label="Workers" value={workers.length} icon={<Users className="h-4 w-4" />} />
+          <Stat label="Customers" value={customers.length} icon={<UserCircle2 className="h-4 w-4" />} />
+          <Stat label="Open Complaints" value={open} icon={<MessageSquareWarning className="h-4 w-4" />} />
+          <Stat label="Platform Earnings" value={`Rs ${totalEarnings.toLocaleString()}`} icon={<DollarSign className="h-4 w-4" />} />
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center gap-2">
           <TabBtn active={tab === "workers"} onClick={() => setTab("workers")} icon={<Users className="h-4 w-4" />} label={`Workers (${workers.length})`} />
+          <TabBtn active={tab === "customers"} onClick={() => setTab("customers")} icon={<UserCircle2 className="h-4 w-4" />} label={`Customers (${customers.length})`} />
           <TabBtn active={tab === "complaints"} onClick={() => setTab("complaints")} icon={<MessageSquareWarning className="h-4 w-4" />} label={`Complaints (${open} open)`} />
+          <div className="relative ml-auto w-full sm:w-72">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search…" className="w-full rounded-full bg-white/15 py-2 pl-10 pr-4 text-sm text-white placeholder-white/60 outline-none" />
+          </div>
         </div>
 
         {tab === "workers" && (
           <div className="mt-6 rounded-2xl bg-card p-6 animate-float-up">
-            {workers.length === 0 && <p className="text-white/70">No workers yet.</p>}
+            {filteredWorkers.length === 0 && <p className="text-white/70">No workers match.</p>}
             <div className="space-y-3">
-              {workers.map((w) => (
+              {filteredWorkers.map((w) => (
                 <div key={w.username} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-navy/60 p-4">
-                  <div>
-                    <p className="font-semibold text-white">{w.name} <span className="text-white/60 text-sm">@{w.username}</span></p>
-                    <p className="text-sm text-white/70">{w.trade} · {w.country}</p>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-white inline-flex items-center gap-2">
+                      {w.name} <span className="text-white/60 text-sm">@{w.username}</span>
+                      {w.verified && <BadgeCheck className="h-4 w-4 text-brand" />}
+                    </p>
+                    <p className="text-sm text-white/70">{w.trade} · {w.country} · Rs {w.earnings.toLocaleString()}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {w.blocked ? (
-                      <span className="rounded-full bg-destructive/30 px-3 py-1 text-xs text-white">Blocked</span>
-                    ) : (
-                      <span className="rounded-full bg-brand/20 px-3 py-1 text-xs text-brand">Active</span>
-                    )}
-                    <button onClick={() => blockWorker(w.username, !w.blocked)} className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1.5 text-xs text-white hover:bg-white/25">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {w.blocked
+                      ? <span className="rounded-full bg-destructive/30 px-3 py-1 text-xs text-white">Blocked</span>
+                      : <span className="rounded-full bg-brand/20 px-3 py-1 text-xs text-brand">Active</span>}
+                    <IconBtn onClick={() => verifyWorker(w.username, !w.verified)}>
+                      <BadgeCheck className="h-3.5 w-3.5" /> {w.verified ? "Unverify" : "Verify"}
+                    </IconBtn>
+                    <IconBtn onClick={() => adjustEarnings(w.username, 1000)}><Plus className="h-3.5 w-3.5" /> 1k</IconBtn>
+                    <IconBtn onClick={() => adjustEarnings(w.username, -1000)}><Minus className="h-3.5 w-3.5" /> 1k</IconBtn>
+                    <IconBtn onClick={() => {
+                      const np = window.prompt(`New password for @${w.username}:`);
+                      if (np && np.length >= 3) resetWorkerPassword(w.username, np);
+                    }}><KeyRound className="h-3.5 w-3.5" /> Reset</IconBtn>
+                    <IconBtn onClick={() => blockWorker(w.username, !w.blocked)}>
                       <Ban className="h-3.5 w-3.5" /> {w.blocked ? "Unblock" : "Block"}
-                    </button>
-                    <button onClick={() => removeWorker(w.username)} className="inline-flex items-center gap-1 rounded-full bg-destructive/70 px-3 py-1.5 text-xs text-white hover:bg-destructive">
+                    </IconBtn>
+                    <button onClick={() => { if (confirm(`Remove ${w.name}?`)) removeWorker(w.username); }} className="inline-flex items-center gap-1 rounded-full bg-destructive/70 px-3 py-1.5 text-xs text-white hover:bg-destructive">
                       <Trash2 className="h-3.5 w-3.5" /> Remove
                     </button>
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {tab === "customers" && (
+          <div className="mt-6 rounded-2xl bg-card p-6 animate-float-up">
+            {filteredCustomers.length === 0 && <p className="text-white/70">No customer accounts yet.</p>}
+            <div className="space-y-3">
+              {filteredCustomers.map((c) => (
+                <div key={c.username} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-navy/60 p-4">
+                  <div>
+                    <p className="font-semibold text-white">{c.name} <span className="text-white/60 text-sm">@{c.username}</span></p>
+                    <p className="text-sm text-white/70">{c.email} · {c.phone} · {c.country}</p>
+                  </div>
+                  <button onClick={() => { if (confirm(`Remove customer ${c.name}?`)) removeCustomer(c.username); }} className="inline-flex items-center gap-1 rounded-full bg-destructive/70 px-3 py-1.5 text-xs text-white hover:bg-destructive">
+                    <Trash2 className="h-3.5 w-3.5" /> Remove
+                  </button>
                 </div>
               ))}
             </div>
@@ -126,5 +185,22 @@ function TabBtn({ active, onClick, icon, label }: { active: boolean; onClick: ()
     <button onClick={onClick} className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${active ? "bg-brand text-brand-foreground" : "bg-white/10 text-white hover:bg-white/20"}`}>
       {icon} {label}
     </button>
+  );
+}
+
+function IconBtn({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1.5 text-xs text-white hover:bg-white/25">
+      {children}
+    </button>
+  );
+}
+
+function Stat({ label, value, icon }: { label: string; value: number | string; icon: React.ReactNode }) {
+  return (
+    <div className="glass-card rounded-2xl p-4">
+      <div className="flex items-center gap-2 text-white/70 text-xs">{icon} {label}</div>
+      <div className="mt-1 text-2xl font-black text-white">{value}</div>
+    </div>
   );
 }
