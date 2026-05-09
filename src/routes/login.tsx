@@ -38,7 +38,6 @@ function Login() {
           <span className="mb-2 block text-center text-sm text-white/80">Password</span>
           <input type="password" value={p} onChange={(e) => setP(e.target.value)} className="input-glow w-full rounded-full bg-white/30 px-6 py-3 text-white outline-none focus:bg-white/40" />
         </label>
-        <p className="text-center text-xs text-white/60">Demo: admin/admin · worker/worker · or your customer signup</p>
         <Link to="/signup" className="text-center text-white/80 hover:text-white">Need a customer account?</Link>
         <button className="input-glow mx-auto rounded-full bg-brand px-12 py-3 font-semibold text-brand-foreground transition hover:scale-105">
           Login
