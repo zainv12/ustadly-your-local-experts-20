@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorkerRouteImport } from './routes/worker'
 import { Route as UrgentRouteImport } from './routes/urgent'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
@@ -16,11 +17,17 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as ComplaintsRouteImport } from './routes/complaints'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfessionalIdRouteImport } from './routes/professional.$id'
 
+const WorkerRoute = WorkerRouteImport.update({
+  id: '/worker',
+  path: '/worker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UrgentRoute = UrgentRouteImport.update({
   id: '/urgent',
   path: '/urgent',
@@ -56,6 +63,11 @@ const HistoryRoute = HistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComplaintsRoute = ComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -81,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/complaints': typeof ComplaintsRoute
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -88,12 +101,14 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/urgent': typeof UrgentRoute
+  '/worker': typeof WorkerRoute
   '/professional/$id': typeof ProfessionalIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/complaints': typeof ComplaintsRoute
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -101,6 +116,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/urgent': typeof UrgentRoute
+  '/worker': typeof WorkerRoute
   '/professional/$id': typeof ProfessionalIdRoute
 }
 export interface FileRoutesById {
@@ -108,6 +124,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/complaints': typeof ComplaintsRoute
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -115,6 +132,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/urgent': typeof UrgentRoute
+  '/worker': typeof WorkerRoute
   '/professional/$id': typeof ProfessionalIdRoute
 }
 export interface FileRouteTypes {
@@ -123,6 +141,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/complaints'
     | '/history'
     | '/home'
     | '/login'
@@ -130,12 +149,14 @@ export interface FileRouteTypes {
     | '/search'
     | '/signup'
     | '/urgent'
+    | '/worker'
     | '/professional/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/admin'
+    | '/complaints'
     | '/history'
     | '/home'
     | '/login'
@@ -143,12 +164,14 @@ export interface FileRouteTypes {
     | '/search'
     | '/signup'
     | '/urgent'
+    | '/worker'
     | '/professional/$id'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/admin'
+    | '/complaints'
     | '/history'
     | '/home'
     | '/login'
@@ -156,6 +179,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/signup'
     | '/urgent'
+    | '/worker'
     | '/professional/$id'
   fileRoutesById: FileRoutesById
 }
@@ -163,6 +187,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
+  ComplaintsRoute: typeof ComplaintsRoute
   HistoryRoute: typeof HistoryRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
@@ -170,11 +195,19 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
   UrgentRoute: typeof UrgentRoute
+  WorkerRoute: typeof WorkerRoute
   ProfessionalIdRoute: typeof ProfessionalIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/worker': {
+      id: '/worker'
+      path: '/worker'
+      fullPath: '/worker'
+      preLoaderRoute: typeof WorkerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/urgent': {
       id: '/urgent'
       path: '/urgent'
@@ -224,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/complaints': {
+      id: '/complaints'
+      path: '/complaints'
+      fullPath: '/complaints'
+      preLoaderRoute: typeof ComplaintsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -259,6 +299,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
+  ComplaintsRoute: ComplaintsRoute,
   HistoryRoute: HistoryRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
@@ -266,8 +307,19 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
   UrgentRoute: UrgentRoute,
+  WorkerRoute: WorkerRoute,
   ProfessionalIdRoute: ProfessionalIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
