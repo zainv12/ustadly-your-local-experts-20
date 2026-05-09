@@ -148,6 +148,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       write(K.workers, list.filter((w) => w.username !== u));
       refresh();
     },
+    verifyWorker: (u, verified) => {
+      const list = read<WorkerAccount[]>(K.workers, []);
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, verified } : w)));
+      refresh();
+    },
+    resetWorkerPassword: (u, newPassword) => {
+      const list = read<WorkerAccount[]>(K.workers, []);
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, password: newPassword } : w)));
+      refresh();
+    },
+    adjustEarnings: (u, amount) => {
+      const list = read<WorkerAccount[]>(K.workers, []);
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, earnings: Math.max(0, w.earnings + amount) } : w)));
+      refresh();
+    },
+    removeCustomer: (u) => {
+      const list = read<Customer[]>(K.customers, []);
+      write(K.customers, list.filter((c) => c.username !== u));
+      refresh();
+    },
   }), [session, customers, workers, complaints, refresh]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
