@@ -11,7 +11,6 @@ export const Route = createFileRoute("/signup")({
 function Signup() {
   const { signupCustomer } = useAuth();
   const navigate = useNavigate();
-  const [step, setStep] = useState<1 | 2>(1);
   const [country, setCountry] = useState("");
   const [form, setForm] = useState({ name: "", phone: "", email: "", cnic: "", username: "", password: "", confirm: "" });
   const [error, setError] = useState("");
@@ -21,6 +20,7 @@ function Signup() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!country) return setError("Please select your country");
     if (!form.username || !form.password) return setError("Username and password are required");
     if (form.password !== form.confirm) return setError("Passwords do not match");
     const res = signupCustomer({
@@ -31,38 +31,24 @@ function Signup() {
     navigate({ to: "/home" });
   };
 
-  if (step === 1) {
-    return (
-      <ToolsBackground overlay="bg-navy/70">
-        <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 px-6">
-          <h1 className="text-center font-display text-5xl font-black text-brand text-shadow-glow">Welcome</h1>
-          <p className="text-center text-white/80">First, choose your country</p>
-          <select
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="input-glow rounded-full bg-white/30 px-6 py-3 text-white outline-none"
-          >
-            <option value="" className="text-navy">Select country…</option>
-            {COUNTRIES.map((c) => <option key={c} value={c} className="text-navy">{c}</option>)}
-          </select>
-          <button
-            onClick={() => country && setStep(2)}
-            disabled={!country}
-            className="input-glow mx-auto rounded-full bg-brand px-12 py-3 font-semibold text-brand-foreground transition hover:scale-105 disabled:opacity-50"
-          >
-            Continue
-          </button>
-          <Link to="/login" className="text-center text-white/80 hover:text-white">Already have an account?</Link>
-        </div>
-      </ToolsBackground>
-    );
-  }
-
   return (
     <ToolsBackground overlay="bg-navy/70">
       <form onSubmit={submit} className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center gap-6 px-6 py-16">
-        <h2 className="text-center text-white/90">Country: <span className="text-brand font-semibold">{country}</span></h2>
+        <h1 className="text-center font-display text-5xl font-black text-brand text-shadow-glow">Create account</h1>
         {error && <p className="text-center text-destructive">{error}</p>}
+
+        <label className="block">
+          <span className="mb-2 block text-center text-sm text-white/80">Country</span>
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="input-glow w-full rounded-full bg-white/30 px-6 py-3 text-white outline-none"
+          >
+            <option value="" className="text-navy">Select your country…</option>
+            {COUNTRIES.map((c) => <option key={c} value={c} className="text-navy">{c}</option>)}
+          </select>
+        </label>
+
         <div className="grid gap-6 sm:grid-cols-2">
           <Field label="Name" value={form.name} onChange={update("name")} />
           <Field label="Phone #" value={form.phone} onChange={update("phone")} />

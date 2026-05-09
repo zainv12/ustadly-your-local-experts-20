@@ -8,11 +8,13 @@ import { professionals } from "@/data/professionals";
 
 export const Route = createFileRoute("/search")({
   component: SearchPage,
+  validateSearch: (s: Record<string, unknown>) => ({ q: typeof s.q === "string" ? s.q : "" }),
   head: () => ({ meta: [{ title: "Search — Ustaadly" }] }),
 });
 
 function SearchPage() {
-  const [q, setQ] = useState("");
+  const { q: initialQ } = Route.useSearch();
+  const [q, setQ] = useState(initialQ);
   const filtered = professionals.filter((p) =>
     [p.name, p.trade, p.category, p.location].some((s) => s.toLowerCase().includes(q.toLowerCase()))
   );
