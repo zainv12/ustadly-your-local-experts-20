@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { HardHat, Briefcase, Shield } from "lucide-react";
+import { HardHat, Briefcase } from "lucide-react";
 import { ToolsBackground } from "@/components/ToolsBackground";
 
 export const Route = createFileRoute("/")({
