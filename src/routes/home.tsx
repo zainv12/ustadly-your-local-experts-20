@@ -1,11 +1,23 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Header } from "@/components/Header";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { CategoryRow } from "@/components/CategoryRow";
 import { professionals, categories, type Category } from "@/data/professionals";
-import hero from "@/assets/hero-construction.jpg";
+import heroConstruction from "@/assets/hero-construction.jpg";
+import heroTeacher from "@/assets/hero-teacher.jpg";
+import heroDoctor from "@/assets/hero-doctor.jpg";
+import heroPlumber from "@/assets/hero-plumber.jpg";
+import heroElectrician from "@/assets/hero-electrician.jpg";
+
+const HERO_SLIDES = [
+  { src: heroConstruction, alt: "Construction workers at night" },
+  { src: heroTeacher, alt: "Teacher in a modern classroom" },
+  { src: heroDoctor, alt: "Doctor in a hospital corridor" },
+  { src: heroPlumber, alt: "Plumber fixing pipes" },
+  { src: heroElectrician, alt: "Electrician working on a panel" },
+];
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -20,6 +32,12 @@ export const Route = createFileRoute("/home")({
 function Home() {
   const navigate = useNavigate();
   const [picked, setPicked] = useState<Category | "">("");
+  const [slide, setSlide] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setSlide((s) => (s + 1) % HERO_SLIDES.length), 10000);
+    return () => clearInterval(t);
+  }, []);
 
   const go = () => {
     if (!picked) return;
@@ -30,7 +48,16 @@ function Home() {
     <div>
       <Header />
       <div className="relative h-[70vh] w-full overflow-hidden">
-        <img src={hero} alt="Construction workers at night" width={1920} height={1080} className="h-full w-full object-cover animate-float-up" />
+        {HERO_SLIDES.map((s, i) => (
+          <img
+            key={s.src}
+            src={s.src}
+            alt={s.alt}
+            width={1920}
+            height={1080}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ${i === slide ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-b from-navy/40 via-navy/30 to-navy" />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
