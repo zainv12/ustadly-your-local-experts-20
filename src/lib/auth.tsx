@@ -2,11 +2,29 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 export type Role = "customer" | "worker" | "admin";
 
-export type Customer = { username: string; password: string; name: string; email: string; phone: string; cnic: string; country: string };
-export type WorkerAccount = { username: string; password: string; name: string; trade: string; country: string; blocked: boolean; earnings: number; verified?: boolean };
+export type Customer = {
+  username: string; password: string;
+  name: string; email: string; phone: string; cnic: string; country: string;
+  /** private — never shown to workers when hiring */
+  address?: string; dob?: string; emergencyContact?: string; notes?: string;
+};
+export type WorkerAccount = {
+  username: string; password: string; name: string; trade: string;
+  /** up to 5 selected professions */
+  trades?: string[];
+  country: string; blocked: boolean; earnings: number; verified?: boolean;
+};
 export type Complaint = { id: string; from: string; against: string; subject: string; message: string; createdAt: number; status: "open" | "resolved" };
 export type UrgentBid = { id: string; customer: string; trade: string; title: string; description: string; budget: number; location: string; createdAt: number; status: "open" | "accepted"; acceptedBy?: string };
+export type Suggestion = { id: string; from: string; kind: "suggestion" | "feedback"; message: string; createdAt: number };
 export type Session = { role: Role; username: string } | null;
+
+export const TRADES = [
+  "Electrician", "Carpenter", "Plumber", "Painter", "Mechanic", "AC Technician",
+  "Welder", "Mason", "Cleaner", "Driver", "Gardener", "Beautician", "Cook",
+  "Tailor", "IT Support", "Mover", "Tutor", "Nurse",
+  "Math Teacher", "English Teacher", "General Physician", "Pediatrician",
+];
 
 const K = {
   customers: "ustaadly:customers",
@@ -15,10 +33,18 @@ const K = {
   session: "ustaadly:session",
   jobs: "ustaadly:jobs",
   urgent: "ustaadly:urgent",
+  suggestions: "ustaadly:suggestions",
 };
 
 const ADMIN = { username: "admin", password: "admin" };
-const WORKER_DEMO: WorkerAccount = { username: "worker", password: "worker", name: "Demo Worker", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 24500, verified: true };
+const WORKER_DEMO: WorkerAccount = { username: "worker", password: "worker", name: "Demo Worker", trade: "Electrician", trades: ["Electrician"], country: "Pakistan", blocked: false, earnings: 24500, verified: true };
+const CUSTOMER_DEMO: Customer = {
+  username: "Customer", password: "customer",
+  name: "Demo Customer", email: "customer@example.com", phone: "+92 300 0000000",
+  cnic: "00000-0000000-0", country: "Pakistan",
+  address: "House 12, Street 4, Lahore", dob: "1995-06-12",
+  emergencyContact: "+92 300 1111111", notes: "Prefers morning appointments.",
+};
 
 const SEED_WORKERS: WorkerAccount[] = [
   WORKER_DEMO,
@@ -55,6 +81,11 @@ function ensureSeed() {
     if (!map.has(seed.username)) { map.set(seed.username, seed); changed = true; }
   }
   if (changed) write(K.workers, Array.from(map.values()));
+
+  const cs = read<Customer[]>(K.customers, []);
+  if (!cs.find((c) => c.username === CUSTOMER_DEMO.username)) {
+    write(K.customers, [...cs, CUSTOMER_DEMO]);
+  }
 }
 
 type Ctx = {
@@ -76,7 +107,10 @@ type Ctx = {
   urgentBids: UrgentBid[];
   postUrgentBid: (b: Omit<UrgentBid, "id" | "createdAt" | "status" | "acceptedBy">) => void;
   acceptUrgentBid: (id: string, workerUsername: string) => void;
-  updateWorkerProfile: (username: string, patch: Partial<Pick<WorkerAccount, "name" | "trade" | "country">>) => void;
+  updateWorkerProfile: (username: string, patch: Partial<Pick<WorkerAccount, "name" | "trade" | "trades" | "country">>) => void;
+  updateCustomerProfile: (username: string, patch: Partial<Omit<Customer, "username" | "password">> & { password?: string }) => void;
+  suggestions: Suggestion[];
+  addSuggestion: (s: Omit<Suggestion, "id" | "createdAt">) => void;
 };
 
 const AuthCtx = createContext<Ctx | null>(null);
@@ -87,6 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [workers, setWorkers] = useState<WorkerAccount[]>([]);
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [urgentBids, setUrgentBids] = useState<UrgentBid[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
   const refresh = useCallback(() => {
     setSession(read<Session>(K.session, null));
@@ -94,6 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setWorkers(read<WorkerAccount[]>(K.workers, []));
     setComplaints(read<Complaint[]>(K.complaints, []));
     setUrgentBids(read<UrgentBid[]>(K.urgent, []));
+    setSuggestions(read<Suggestion[]>(K.suggestions, []));
   }, []);
 
   useEffect(() => {
@@ -189,10 +225,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     updateWorkerProfile: (u, patch) => {
       const list = read<WorkerAccount[]>(K.workers, []);
-      write(K.workers, list.map((w) => (w.username === u ? { ...w, ...patch } : w)));
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, ...patch, trade: patch.trades?.[0] ?? patch.trade ?? w.trade } : w)));
       refresh();
     },
-  }), [session, customers, workers, complaints, urgentBids, refresh]);
+    updateCustomerProfile: (u, patch) => {
+      const list = read<Customer[]>(K.customers, []);
+      write(K.customers, list.map((c) => (c.username === u ? { ...c, ...patch } : c)));
+      refresh();
+    },
+    suggestions,
+    addSuggestion: (s) => {
+      const list = read<Suggestion[]>(K.suggestions, []);
+      write(K.suggestions, [{ ...s, id: crypto.randomUUID(), createdAt: Date.now() }, ...list]);
+      refresh();
+    },
+  }), [session, customers, workers, complaints, urgentBids, suggestions, refresh]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }

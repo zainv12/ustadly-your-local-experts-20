@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { CategoryRow } from "@/components/CategoryRow";
 import { professionals, categories, type Category } from "@/data/professionals";
@@ -94,8 +95,9 @@ function Home() {
             return <CategoryRow key={cat} title={cat} items={items} />;
           })}
         </div>
-        <footer className="px-8 py-12 text-center text-sm text-white/50">© {new Date().getFullYear()} Ustaadly.</footer>
+        <div className="h-8" />
       </ToolsBackground>
+      <Footer />
     </div>
   );
 }
