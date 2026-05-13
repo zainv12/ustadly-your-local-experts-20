@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { CategoryRow } from "@/components/CategoryRow";
 import { professionals, categories, type Category } from "@/data/professionals";
