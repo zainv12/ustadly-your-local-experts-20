@@ -261,6 +261,8 @@ function WorkerDashboard() {
         </div>
       </div>
     </ToolsBackground>
+    <Footer />
+    </>
   );
 }
 
