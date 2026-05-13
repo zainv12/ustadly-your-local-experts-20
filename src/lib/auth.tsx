@@ -225,10 +225,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     updateWorkerProfile: (u, patch) => {
       const list = read<WorkerAccount[]>(K.workers, []);
-      write(K.workers, list.map((w) => (w.username === u ? { ...w, ...patch } : w)));
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, ...patch, trade: patch.trades?.[0] ?? patch.trade ?? w.trade } : w)));
       refresh();
     },
-  }), [session, customers, workers, complaints, urgentBids, refresh]);
+    updateCustomerProfile: (u, patch) => {
+      const list = read<Customer[]>(K.customers, []);
+      write(K.customers, list.map((c) => (c.username === u ? { ...c, ...patch } : c)));
+      refresh();
+    },
+    suggestions,
+    addSuggestion: (s) => {
+      const list = read<Suggestion[]>(K.suggestions, []);
+      write(K.suggestions, [{ ...s, id: crypto.randomUUID(), createdAt: Date.now() }, ...list]);
+      refresh();
+    },
+  }), [session, customers, workers, complaints, urgentBids, suggestions, refresh]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }
