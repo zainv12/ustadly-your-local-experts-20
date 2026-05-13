@@ -14,6 +14,7 @@ import { Route as UrgentRouteImport } from './routes/urgent'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PostJobRouteImport } from './routes/post-job'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as HistoryRouteImport } from './routes/history'
@@ -46,6 +47,11 @@ const SearchRoute = SearchRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostJobRoute = PostJobRouteImport.update({
+  id: '/post-job',
+  path: '/post-job',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/post-job': typeof PostJobRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/post-job': typeof PostJobRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/post-job': typeof PostJobRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/home'
     | '/login'
+    | '/post-job'
     | '/profile'
     | '/search'
     | '/signup'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/home'
     | '/login'
+    | '/post-job'
     | '/profile'
     | '/search'
     | '/signup'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/home'
     | '/login'
+    | '/post-job'
     | '/profile'
     | '/search'
     | '/signup'
@@ -191,6 +203,7 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
+  PostJobRoute: typeof PostJobRoute
   ProfileRoute: typeof ProfileRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/post-job': {
+      id: '/post-job'
+      path: '/post-job'
+      fullPath: '/post-job'
+      preLoaderRoute: typeof PostJobRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -303,6 +323,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoryRoute: HistoryRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
+  PostJobRoute: PostJobRoute,
   ProfileRoute: ProfileRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
@@ -313,3 +334,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
