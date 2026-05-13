@@ -2,11 +2,29 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 export type Role = "customer" | "worker" | "admin";
 
-export type Customer = { username: string; password: string; name: string; email: string; phone: string; cnic: string; country: string };
-export type WorkerAccount = { username: string; password: string; name: string; trade: string; country: string; blocked: boolean; earnings: number; verified?: boolean };
+export type Customer = {
+  username: string; password: string;
+  name: string; email: string; phone: string; cnic: string; country: string;
+  /** private — never shown to workers when hiring */
+  address?: string; dob?: string; emergencyContact?: string; notes?: string;
+};
+export type WorkerAccount = {
+  username: string; password: string; name: string; trade: string;
+  /** up to 5 selected professions */
+  trades?: string[];
+  country: string; blocked: boolean; earnings: number; verified?: boolean;
+};
 export type Complaint = { id: string; from: string; against: string; subject: string; message: string; createdAt: number; status: "open" | "resolved" };
 export type UrgentBid = { id: string; customer: string; trade: string; title: string; description: string; budget: number; location: string; createdAt: number; status: "open" | "accepted"; acceptedBy?: string };
+export type Suggestion = { id: string; from: string; kind: "suggestion" | "feedback"; message: string; createdAt: number };
 export type Session = { role: Role; username: string } | null;
+
+export const TRADES = [
+  "Electrician", "Carpenter", "Plumber", "Painter", "Mechanic", "AC Technician",
+  "Welder", "Mason", "Cleaner", "Driver", "Gardener", "Beautician", "Cook",
+  "Tailor", "IT Support", "Mover", "Tutor", "Nurse",
+  "Math Teacher", "English Teacher", "General Physician", "Pediatrician",
+];
 
 const K = {
   customers: "ustaadly:customers",
@@ -15,10 +33,18 @@ const K = {
   session: "ustaadly:session",
   jobs: "ustaadly:jobs",
   urgent: "ustaadly:urgent",
+  suggestions: "ustaadly:suggestions",
 };
 
 const ADMIN = { username: "admin", password: "admin" };
-const WORKER_DEMO: WorkerAccount = { username: "worker", password: "worker", name: "Demo Worker", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 24500, verified: true };
+const WORKER_DEMO: WorkerAccount = { username: "worker", password: "worker", name: "Demo Worker", trade: "Electrician", trades: ["Electrician"], country: "Pakistan", blocked: false, earnings: 24500, verified: true };
+const CUSTOMER_DEMO: Customer = {
+  username: "Customer", password: "customer",
+  name: "Demo Customer", email: "customer@example.com", phone: "+92 300 0000000",
+  cnic: "00000-0000000-0", country: "Pakistan",
+  address: "House 12, Street 4, Lahore", dob: "1995-06-12",
+  emergencyContact: "+92 300 1111111", notes: "Prefers morning appointments.",
+};
 
 const SEED_WORKERS: WorkerAccount[] = [
   WORKER_DEMO,
