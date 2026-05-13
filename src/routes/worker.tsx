@@ -38,18 +38,33 @@ function WorkerDashboard() {
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(me?.name ?? "");
-  const [trade, setTrade] = useState(me?.trade ?? "");
+  const [trades, setTrades] = useState<string[]>(me?.trades ?? (me?.trade ? [me.trade] : []));
   const [country, setCountry] = useState(me?.country ?? "");
+  const MAX_TRADES = 5;
 
   useEffect(() => {
-    if (me) { setName(me.name); setTrade(me.trade); setCountry(me.country); }
+    if (me) {
+      setName(me.name);
+      setTrades(me.trades && me.trades.length ? me.trades : me.trade ? [me.trade] : []);
+      setCountry(me.country);
+    }
   }, [me]);
+
+  const toggleTrade = (t: string) => {
+    setTrades((cur) => {
+      if (cur.includes(t)) return cur.filter((x) => x !== t);
+      if (cur.length >= MAX_TRADES) return cur;
+      return [...cur, t];
+    });
+  };
 
   const saveProfile = () => {
     if (!session) return;
-    updateWorkerProfile(session.username, { name, trade, country });
+    if (trades.length === 0) return;
+    updateWorkerProfile(session.username, { name, trades, trade: trades[0], country });
     setEditing(false);
   };
+  const myTrades = me?.trades && me.trades.length ? me.trades : me?.trade ? [me.trade] : [];
 
   return (
     <ToolsBackground overlay="bg-navy/75">
