@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ToolsBackground } from "@/components/ToolsBackground";
-import { useAuth } from "@/lib/auth";
-import { Wallet, Briefcase, History, Star, LogOut, ClipboardList, User, Pencil, BadgeCheck, Megaphone, MapPin } from "lucide-react";
+import { Footer } from "@/components/Footer";
+import { useAuth, TRADES } from "@/lib/auth";
+import { Wallet, Briefcase, History, Star, LogOut, ClipboardList, User, Pencil, BadgeCheck, Megaphone, MapPin, X, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/worker")({
   component: WorkerDashboard,
