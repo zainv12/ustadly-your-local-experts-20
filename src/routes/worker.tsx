@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { useAuth } from "@/lib/auth";
-import { Wallet, Briefcase, History, Star, LogOut, ClipboardList } from "lucide-react";
+import { Wallet, Briefcase, History, Star, LogOut, ClipboardList, User, Pencil, BadgeCheck, Megaphone, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/worker")({
   component: WorkerDashboard,
@@ -22,7 +22,7 @@ const incoming = [
 ];
 
 function WorkerDashboard() {
-  const { session, workers, logout } = useAuth();
+  const { session, workers, logout, urgentBids, acceptUrgentBid, updateWorkerProfile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +32,23 @@ function WorkerDashboard() {
   const me = workers.find((w) => w.username === session?.username);
   const earnings = me?.earnings ?? 0;
   const totalEarned = earnings + recentJobs.reduce((s, j) => s + j.amount, 0);
+  const openBids = urgentBids.filter((b) => b.status === "open");
+  const myAccepted = urgentBids.filter((b) => b.acceptedBy === session?.username);
+
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(me?.name ?? "");
+  const [trade, setTrade] = useState(me?.trade ?? "");
+  const [country, setCountry] = useState(me?.country ?? "");
+
+  useEffect(() => {
+    if (me) { setName(me.name); setTrade(me.trade); setCountry(me.country); }
+  }, [me]);
+
+  const saveProfile = () => {
+    if (!session) return;
+    updateWorkerProfile(session.username, { name, trade, country });
+    setEditing(false);
+  };
 
   return (
     <ToolsBackground overlay="bg-navy/75">
@@ -50,6 +67,42 @@ function WorkerDashboard() {
           <div className="mt-6 rounded-xl bg-destructive/30 p-4 text-white">⚠ Your account has been blocked by admin. Contact support.</div>
         )}
 
+        {/* Profile card */}
+        <div className="mt-8 rounded-2xl bg-card p-6 animate-float-up">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand/20 text-brand">
+                <User className="h-8 w-8" />
+              </div>
+              <div>
+                <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
+                  {me?.name ?? "—"}
+                  {me?.verified && <BadgeCheck className="h-5 w-5 text-brand" />}
+                </h2>
+                <p className="text-white/70">{me?.trade} • {me?.country}</p>
+                <p className="text-xs text-white/50">@{session?.username}</p>
+              </div>
+            </div>
+            {!editing ? (
+              <button onClick={() => setEditing(true)} className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:scale-105 transition">
+                <Pencil className="h-4 w-4" /> Edit profile
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <button onClick={saveProfile} className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground">Save</button>
+                <button onClick={() => setEditing(false)} className="rounded-full bg-white/15 px-4 py-2 text-sm text-white">Cancel</button>
+              </div>
+            )}
+          </div>
+          {editing && (
+            <div className="mt-5 grid gap-4 sm:grid-cols-3">
+              <Input label="Full name" value={name} onChange={setName} />
+              <Input label="Trade" value={trade} onChange={setTrade} />
+              <Input label="Country" value={country} onChange={setCountry} />
+            </div>
+          )}
+        </div>
+
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <Stat icon={<Wallet className="h-6 w-6" />} label="Total earned" value={`PKR ${totalEarned.toLocaleString()}`} />
           <Stat icon={<Briefcase className="h-6 w-6" />} label="Jobs done" value={recentJobs.length.toString()} />
@@ -57,8 +110,39 @@ function WorkerDashboard() {
           <Stat icon={<Star className="h-6 w-6" />} label="Rating" value="4.8" />
         </div>
 
+        {/* Universal urgent bids */}
+        <div className="mt-10">
+          <Panel title={`Urgent job board (${openBids.length} open)`} icon={<Megaphone className="h-5 w-5 text-brand" />}>
+            {openBids.length === 0 ? (
+              <p className="text-white/60 text-sm">No open jobs right now. Check back soon.</p>
+            ) : (
+              <div className="space-y-3">
+                {openBids.map((b) => (
+                  <div key={b.id} className="rounded-xl bg-navy/60 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <span className="rounded-full bg-brand/20 px-2 py-0.5 text-xs font-semibold text-brand">{b.trade}</span>
+                        <p className="mt-1 font-semibold text-white">{b.title}</p>
+                        <p className="text-sm text-white/70">{b.description}</p>
+                        <p className="mt-1 text-xs text-white/50 inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{b.location} • {b.customer}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xl font-black text-brand">PKR {b.budget.toLocaleString()}</p>
+                        <button onClick={() => acceptUrgentBid(b.id, session!.username)}
+                          className="mt-2 rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-brand-foreground hover:scale-105 transition">
+                          Accept
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Panel>
+        </div>
+
         <div className="mt-10 grid gap-8 lg:grid-cols-2">
-          <Panel title="Incoming bids" icon={<ClipboardList className="h-5 w-5 text-brand" />}>
+          <Panel title="Incoming direct bids" icon={<ClipboardList className="h-5 w-5 text-brand" />}>
             <div className="space-y-3">
               {incoming.map((b) => (
                 <div key={b.id} className="flex items-center justify-between rounded-xl bg-navy/60 p-4">
@@ -98,7 +182,7 @@ function WorkerDashboard() {
                   <tr><th className="py-2">Date</th><th>Customer</th><th>Task</th><th>Status</th><th className="text-right">Amount</th></tr>
                 </thead>
                 <tbody>
-                  {recentJobs.map((j) => (
+                  {[...myAccepted.map((b) => ({ id: b.id, date: new Date(b.createdAt).toISOString().slice(0,10), customer: b.customer, task: b.title, status: "Accepted", amount: b.budget })), ...recentJobs].map((j) => (
                     <tr key={j.id} className="border-t border-white/10">
                       <td className="py-3">{j.date}</td>
                       <td>{j.customer}</td>
@@ -135,5 +219,13 @@ function Panel({ title, icon, children }: { title: string; icon: React.ReactNode
       <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">{icon} {title}</h3>
       {children}
     </div>
+  );
+}
+function Input({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-sm font-semibold text-white/80">{label}</span>
+      <input value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-lg bg-navy/60 p-2.5 text-white outline-none" />
+    </label>
   );
 }

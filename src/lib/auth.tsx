@@ -5,6 +5,7 @@ export type Role = "customer" | "worker" | "admin";
 export type Customer = { username: string; password: string; name: string; email: string; phone: string; cnic: string; country: string };
 export type WorkerAccount = { username: string; password: string; name: string; trade: string; country: string; blocked: boolean; earnings: number; verified?: boolean };
 export type Complaint = { id: string; from: string; against: string; subject: string; message: string; createdAt: number; status: "open" | "resolved" };
+export type UrgentBid = { id: string; customer: string; trade: string; title: string; description: string; budget: number; location: string; createdAt: number; status: "open" | "accepted"; acceptedBy?: string };
 export type Session = { role: Role; username: string } | null;
 
 const K = {
@@ -13,6 +14,7 @@ const K = {
   complaints: "ustaadly:complaints",
   session: "ustaadly:session",
   jobs: "ustaadly:jobs",
+  urgent: "ustaadly:urgent",
 };
 
 const ADMIN = { username: "admin", password: "admin" };
@@ -71,6 +73,10 @@ type Ctx = {
   resetWorkerPassword: (username: string, newPassword: string) => void;
   adjustEarnings: (username: string, amount: number) => void;
   removeCustomer: (username: string) => void;
+  urgentBids: UrgentBid[];
+  postUrgentBid: (b: Omit<UrgentBid, "id" | "createdAt" | "status" | "acceptedBy">) => void;
+  acceptUrgentBid: (id: string, workerUsername: string) => void;
+  updateWorkerProfile: (username: string, patch: Partial<Pick<WorkerAccount, "name" | "trade" | "country">>) => void;
 };
 
 const AuthCtx = createContext<Ctx | null>(null);
@@ -80,12 +86,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [workers, setWorkers] = useState<WorkerAccount[]>([]);
   const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [urgentBids, setUrgentBids] = useState<UrgentBid[]>([]);
 
   const refresh = useCallback(() => {
     setSession(read<Session>(K.session, null));
     setCustomers(read<Customer[]>(K.customers, []));
     setWorkers(read<WorkerAccount[]>(K.workers, []));
     setComplaints(read<Complaint[]>(K.complaints, []));
+    setUrgentBids(read<UrgentBid[]>(K.urgent, []));
   }, []);
 
   useEffect(() => {
@@ -168,7 +176,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       write(K.customers, list.filter((c) => c.username !== u));
       refresh();
     },
-  }), [session, customers, workers, complaints, refresh]);
+    urgentBids,
+    postUrgentBid: (b) => {
+      const list = read<UrgentBid[]>(K.urgent, []);
+      write(K.urgent, [{ ...b, id: crypto.randomUUID(), createdAt: Date.now(), status: "open" }, ...list]);
+      refresh();
+    },
+    acceptUrgentBid: (id, workerUsername) => {
+      const list = read<UrgentBid[]>(K.urgent, []);
+      write(K.urgent, list.map((x) => (x.id === id && x.status === "open" ? { ...x, status: "accepted", acceptedBy: workerUsername } : x)));
+      refresh();
+    },
+    updateWorkerProfile: (u, patch) => {
+      const list = read<WorkerAccount[]>(K.workers, []);
+      write(K.workers, list.map((w) => (w.username === u ? { ...w, ...patch } : w)));
+      refresh();
+    },
+  }), [session, customers, workers, complaints, urgentBids, refresh]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }
