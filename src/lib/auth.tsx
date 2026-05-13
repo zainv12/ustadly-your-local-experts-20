@@ -121,6 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [workers, setWorkers] = useState<WorkerAccount[]>([]);
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [urgentBids, setUrgentBids] = useState<UrgentBid[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
   const refresh = useCallback(() => {
     setSession(read<Session>(K.session, null));
@@ -128,6 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setWorkers(read<WorkerAccount[]>(K.workers, []));
     setComplaints(read<Complaint[]>(K.complaints, []));
     setUrgentBids(read<UrgentBid[]>(K.urgent, []));
+    setSuggestions(read<Suggestion[]>(K.suggestions, []));
   }, []);
 
   useEffect(() => {
