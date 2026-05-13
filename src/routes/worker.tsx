@@ -95,7 +95,7 @@ function WorkerDashboard() {
                   {me?.name ?? "—"}
                   {me?.verified && <BadgeCheck className="h-5 w-5 text-brand" />}
                 </h2>
-                <p className="text-white/70">{me?.trade} • {me?.country}</p>
+                <p className="text-white/70">{(myTrades.length ? myTrades : [me?.trade]).filter(Boolean).join(" • ")} · {me?.country}</p>
                 <p className="text-xs text-white/50">@{session?.username}</p>
               </div>
             </div>
@@ -105,16 +105,59 @@ function WorkerDashboard() {
               </button>
             ) : (
               <div className="flex gap-2">
-                <button onClick={saveProfile} className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground">Save</button>
+                <button onClick={saveProfile} disabled={trades.length === 0} className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground disabled:opacity-50">Save</button>
                 <button onClick={() => setEditing(false)} className="rounded-full bg-white/15 px-4 py-2 text-sm text-white">Cancel</button>
               </div>
             )}
           </div>
+
+          {!editing && myTrades.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {myTrades.map((t) => (
+                <span key={t} className="rounded-full bg-brand/20 px-3 py-1 text-xs font-semibold text-brand">{t}</span>
+              ))}
+            </div>
+          )}
+
           {editing && (
-            <div className="mt-5 grid gap-4 sm:grid-cols-3">
-              <Input label="Full name" value={name} onChange={setName} />
-              <Input label="Trade" value={trade} onChange={setTrade} />
-              <Input label="Country" value={country} onChange={setCountry} />
+            <div className="mt-5 space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Input label="Full name" value={name} onChange={setName} />
+                <Input label="Country" value={country} onChange={setCountry} />
+              </div>
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-white/80">Professions (pick up to {MAX_TRADES})</span>
+                  <span className="text-xs text-white/60">{trades.length}/{MAX_TRADES} selected</span>
+                </div>
+                {trades.length > 0 && (
+                  <div className="mb-3 flex flex-wrap gap-2">
+                    {trades.map((t) => (
+                      <span key={t} className="inline-flex items-center gap-1 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-brand-foreground">
+                        {t}
+                        <button type="button" onClick={() => toggleTrade(t)} className="rounded-full hover:bg-black/20">
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  {TRADES.map((t) => {
+                    const sel = trades.includes(t);
+                    const disabled = !sel && trades.length >= MAX_TRADES;
+                    return (
+                      <button key={t} type="button" disabled={disabled} onClick={() => toggleTrade(t)}
+                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs transition ${
+                          sel ? "bg-brand/30 text-brand ring-1 ring-brand"
+                          : disabled ? "bg-white/5 text-white/30 cursor-not-allowed"
+                          : "bg-white/10 text-white hover:bg-white/20"}`}>
+                        {!sel && <Plus className="h-3 w-3" />} {t}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
         </div>
