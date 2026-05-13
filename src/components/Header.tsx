@@ -1,11 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { LogOut, User, MessageSquareWarning } from "lucide-react";
+import { LogOut, User, MessageSquareWarning, Megaphone } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 const links = [
   { to: "/home", label: "Home" },
   { to: "/search", label: "Search" },
   { to: "/urgent", label: "Urgent" },
+  { to: "/post-job", label: "Post a job" },
   { to: "/history", label: "History" },
   { to: "/complaints", label: "Complaints" },
   { to: "/about", label: "About Us" },
@@ -29,7 +30,9 @@ export function Header() {
             return (
               <Link key={l.to} to={l.to}
                 className={`relative text-base font-semibold transition-colors ${active ? "text-navy" : "text-navy/70 hover:text-navy"}`}>
-                {l.label === "Complaints" ? <span className="inline-flex items-center gap-1"><MessageSquareWarning className="h-4 w-4" />{l.label}</span> : l.label}
+                {l.label === "Complaints" ? <span className="inline-flex items-center gap-1"><MessageSquareWarning className="h-4 w-4" />{l.label}</span>
+                  : l.label === "Post a job" ? <span className="inline-flex items-center gap-1"><Megaphone className="h-4 w-4" />{l.label}</span>
+                  : l.label}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-brand transition-all duration-300 ${active ? "w-full" : "w-0"}`} />
               </Link>
             );
