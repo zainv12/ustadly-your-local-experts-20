@@ -107,7 +107,10 @@ type Ctx = {
   urgentBids: UrgentBid[];
   postUrgentBid: (b: Omit<UrgentBid, "id" | "createdAt" | "status" | "acceptedBy">) => void;
   acceptUrgentBid: (id: string, workerUsername: string) => void;
-  updateWorkerProfile: (username: string, patch: Partial<Pick<WorkerAccount, "name" | "trade" | "country">>) => void;
+  updateWorkerProfile: (username: string, patch: Partial<Pick<WorkerAccount, "name" | "trade" | "trades" | "country">>) => void;
+  updateCustomerProfile: (username: string, patch: Partial<Omit<Customer, "username" | "password">> & { password?: string }) => void;
+  suggestions: Suggestion[];
+  addSuggestion: (s: Omit<Suggestion, "id" | "createdAt">) => void;
 };
 
 const AuthCtx = createContext<Ctx | null>(null);
