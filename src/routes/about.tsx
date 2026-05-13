@@ -39,6 +39,7 @@ function About() {
           </div>
         </div>
       </ToolsBackground>
+      <Footer />
     </div>
   );
 }
