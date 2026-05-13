@@ -67,6 +67,7 @@ function WorkerDashboard() {
   const myTrades = me?.trades && me.trades.length ? me.trades : me?.trade ? [me.trade] : [];
 
   return (
+    <>
     <ToolsBackground overlay="bg-navy/75">
       <div className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
