@@ -81,6 +81,11 @@ function ensureSeed() {
     if (!map.has(seed.username)) { map.set(seed.username, seed); changed = true; }
   }
   if (changed) write(K.workers, Array.from(map.values()));
+
+  const cs = read<Customer[]>(K.customers, []);
+  if (!cs.find((c) => c.username === CUSTOMER_DEMO.username)) {
+    write(K.customers, [...cs, CUSTOMER_DEMO]);
+  }
 }
 
 type Ctx = {
