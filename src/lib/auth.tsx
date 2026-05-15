@@ -135,6 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setComplaints(read<Complaint[]>(K.complaints, []));
     setUrgentBids(read<UrgentBid[]>(K.urgent, []));
     setSuggestions(read<Suggestion[]>(K.suggestions, []));
+    setHires(read<Hire[]>(K.hires, []));
   }, []);
 
   useEffect(() => {
