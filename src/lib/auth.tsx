@@ -113,6 +113,8 @@ type Ctx = {
   updateCustomerProfile: (username: string, patch: Partial<Omit<Customer, "username" | "password">> & { password?: string }) => void;
   suggestions: Suggestion[];
   addSuggestion: (s: Omit<Suggestion, "id" | "createdAt">) => void;
+  hires: Hire[];
+  addHire: (h: Omit<Hire, "id" | "createdAt">) => void;
 };
 
 const AuthCtx = createContext<Ctx | null>(null);
