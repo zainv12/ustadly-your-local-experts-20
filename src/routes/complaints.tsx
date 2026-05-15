@@ -13,8 +13,23 @@ export const Route = createFileRoute("/complaints")({
 });
 
 function Complaints() {
-  const { session, fileComplaint, complaints, suggestions, addSuggestion } = useAuth();
+  const { session, fileComplaint, complaints, suggestions, addSuggestion, hires, urgentBids } = useAuth();
   const [against, setAgainst] = useState("");
+
+  const hireableWorkers = useMemo(() => {
+    if (!session || session.role !== "customer") return [] as { name: string; trade?: string }[];
+    const map = new Map<string, { name: string; trade?: string }>();
+    hires.filter((h) => h.customer === session.username).forEach((h) => {
+      map.set(h.workerName, { name: h.workerName, trade: h.trade });
+    });
+    urgentBids
+      .filter((b) => b.customer === session.username && b.status === "accepted" && b.acceptedBy)
+      .forEach((b) => {
+        const name = b.acceptedBy!;
+        if (!map.has(name)) map.set(name, { name, trade: b.trade });
+      });
+    return Array.from(map.values());
+  }, [session, hires, urgentBids]);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
