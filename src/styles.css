@@ -74,6 +74,48 @@
   --foreground: oklch(0.98 0 0);
 }
 
+/* Light theme: flips the navy/card surfaces and base text. Existing
+   text-white / bg-white utilities are remapped via overrides below so the
+   majority of the UI inverts cleanly. */
+.light {
+  --navy: oklch(0.97 0.01 250);
+  --navy-light: oklch(0.92 0.02 250);
+  --header: oklch(0.22 0.06 260);
+  --background: oklch(0.98 0.005 250);
+  --foreground: oklch(0.18 0.05 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.05 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.05 260);
+  --secondary: oklch(0.9 0.02 250);
+  --secondary-foreground: oklch(0.18 0.05 260);
+  --muted: oklch(0.94 0.01 250);
+  --muted-foreground: oklch(0.4 0.03 250);
+  --border: oklch(0.18 0.05 260 / 12%);
+  --input: oklch(0.18 0.05 260 / 10%);
+  --brand-foreground: oklch(0.18 0.05 260);
+}
+
+/* Map hard-coded white text and translucent white surfaces to dark
+   equivalents in light mode so the site reads correctly without rewriting
+   every component. */
+.light .text-white { color: oklch(0.18 0.05 260); }
+.light .text-white\/80,
+.light .text-white\/85,
+.light .text-white\/70 { color: oklch(0.32 0.04 260); }
+.light .text-white\/60,
+.light .text-white\/50,
+.light .text-white\/40 { color: oklch(0.5 0.03 260); }
+.light .bg-white\/15 { background-color: oklch(0.18 0.05 260 / 8%); }
+.light .bg-white\/25 { background-color: oklch(0.18 0.05 260 / 14%); }
+.light .hover\:bg-white\/10:hover { background-color: oklch(0.18 0.05 260 / 6%); }
+.light .hover\:bg-white\/25:hover { background-color: oklch(0.18 0.05 260 / 14%); }
+.light .ring-white\/20 { --tw-ring-color: oklch(0.18 0.05 260 / 15%); }
+.light .border-white\/10,
+.light .border-white\/15,
+.light .border-white\/20,
+.light .border-white\/30 { border-color: oklch(0.18 0.05 260 / 15%); }
+
 @layer base {
   * { border-color: var(--color-border); }
   body {
