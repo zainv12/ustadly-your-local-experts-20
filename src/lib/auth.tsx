@@ -60,6 +60,9 @@ const SEED_WORKERS: WorkerAccount[] = [
   { username: "hamza", password: "hamza123", name: "Hamza Sheikh", trade: "English Teacher", country: "Pakistan", blocked: false, earnings: 19500, verified: true },
   { username: "ayesha", password: "ayesha123", name: "Dr. Ayesha Khan", trade: "General Physician", country: "Pakistan", blocked: false, earnings: 48000, verified: true },
   { username: "usman", password: "usman123", name: "Dr. Usman Tariq", trade: "Pediatrician", country: "Pakistan", blocked: false, earnings: 52500, verified: true },
+  { username: "kamran", password: "kamran123", name: "Kamran Aslam", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 22100, verified: true },
+  { username: "rashid", password: "rashid123", name: "Rashid Mahmood", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 17800, verified: true },
+  { username: "junaid", password: "junaid123", name: "Junaid Akram", trade: "Electrician", country: "Pakistan", blocked: false, earnings: 29400, verified: true },
   { username: "zahid", password: "zahid123", name: "Zahid Painter", trade: "Painter", country: "Pakistan", blocked: false, earnings: 7600, verified: false },
   { username: "tariq", password: "tariq123", name: "Tariq Mechanic", trade: "Mechanic", country: "Pakistan", blocked: true, earnings: 4300, verified: false },
 ];
