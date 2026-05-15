@@ -35,6 +35,7 @@ const K = {
   jobs: "ustaadly:jobs",
   urgent: "ustaadly:urgent",
   suggestions: "ustaadly:suggestions",
+  hires: "ustaadly:hires",
 };
 
 const ADMIN = { username: "admin", password: "admin" };
