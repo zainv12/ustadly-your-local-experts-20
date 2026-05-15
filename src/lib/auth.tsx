@@ -17,6 +17,7 @@ export type WorkerAccount = {
 export type Complaint = { id: string; from: string; against: string; subject: string; message: string; createdAt: number; status: "open" | "resolved" };
 export type UrgentBid = { id: string; customer: string; trade: string; title: string; description: string; budget: number; location: string; neededAt?: string; createdAt: number; status: "open" | "accepted"; acceptedBy?: string };
 export type Suggestion = { id: string; from: string; kind: "suggestion" | "feedback"; message: string; createdAt: number };
+export type Hire = { id: string; customer: string; workerName: string; workerId?: string; trade?: string; createdAt: number };
 export type Session = { role: Role; username: string } | null;
 
 export const TRADES = [
