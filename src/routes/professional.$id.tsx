@@ -15,7 +15,7 @@ type Msg = { from: "you" | "pro"; text: string; time: string };
 function ProfessionalPage() {
   const { id } = useParams({ from: "/professional/$id" });
   const pro = professionals.find((p) => p.id === id);
-  const { session } = useAuth();
+  const { session, addHire } = useAuth();
 
   const [bid, setBid] = useState("");
   const [bidNote, setBidNote] = useState("");
@@ -64,6 +64,9 @@ function ProfessionalPage() {
     e.preventDefault();
     if (!bid) return;
     setBidSent({ amount: bid, note: bidNote });
+    if (pro && session?.role === "customer") {
+      addHire({ customer: session.username, workerName: pro.name, workerId: pro.id, trade: pro.trade });
+    }
     setBid(""); setBidNote("");
   };
 

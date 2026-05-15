@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { useAuth } from "@/lib/auth";
-import { professionals } from "@/data/professionals";
+
 import { MessageSquareWarning, CheckCircle2, Lightbulb, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/complaints")({
@@ -13,8 +13,23 @@ export const Route = createFileRoute("/complaints")({
 });
 
 function Complaints() {
-  const { session, fileComplaint, complaints, suggestions, addSuggestion } = useAuth();
+  const { session, fileComplaint, complaints, suggestions, addSuggestion, hires, urgentBids } = useAuth();
   const [against, setAgainst] = useState("");
+
+  const hireableWorkers = useMemo(() => {
+    if (!session || session.role !== "customer") return [] as { name: string; trade?: string }[];
+    const map = new Map<string, { name: string; trade?: string }>();
+    hires.filter((h) => h.customer === session.username).forEach((h) => {
+      map.set(h.workerName, { name: h.workerName, trade: h.trade });
+    });
+    urgentBids
+      .filter((b) => b.customer === session.username && b.status === "accepted" && b.acceptedBy)
+      .forEach((b) => {
+        const name = b.acceptedBy!;
+        if (!map.has(name)) map.set(name, { name, trade: b.trade });
+      });
+    return Array.from(map.values());
+  }, [session, hires, urgentBids]);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
@@ -77,13 +92,25 @@ function Complaints() {
             <div className="mt-8 rounded-2xl bg-card p-6 text-white">
               Please <Link to="/login" className="text-brand underline">login</Link> to file a complaint. (You can still send suggestions or feedback below.)
             </div>
+          ) : session.role !== "customer" ? (
+            <div className="mt-8 rounded-2xl bg-card p-6 text-white">
+              Only customers can file complaints against workers.
+            </div>
+          ) : hireableWorkers.length === 0 ? (
+            <div className="mt-8 rounded-2xl bg-card p-6 text-white">
+              You can only complain about workers you have hired. <Link to="/home" className="text-brand underline">Hire a worker</Link> first, then return here.
+            </div>
           ) : (
             <form onSubmit={submit} className="mt-8 rounded-2xl bg-card p-6 space-y-4 animate-float-up">
               <div>
-                <label className="mb-1 block text-sm text-white/80">Worker</label>
+                <label className="mb-1 block text-sm text-white/80">Worker (from your hire history)</label>
                 <select value={against} onChange={(e) => setAgainst(e.target.value)} className="w-full rounded-full bg-navy/60 px-5 py-3 text-white outline-none">
                   <option value="">Select a worker…</option>
-                  {professionals.map((p) => <option key={p.id} value={p.name} className="text-navy">{p.name} — {p.trade}</option>)}
+                  {hireableWorkers.map((w) => (
+                    <option key={w.name} value={w.name} className="text-navy">
+                      {w.name}{w.trade ? ` — ${w.trade}` : ""}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
