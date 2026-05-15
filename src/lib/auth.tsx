@@ -126,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [urgentBids, setUrgentBids] = useState<UrgentBid[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [hires, setHires] = useState<Hire[]>([]);
 
   const refresh = useCallback(() => {
     setSession(read<Session>(K.session, null));
