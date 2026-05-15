@@ -64,6 +64,9 @@ function ProfessionalPage() {
     e.preventDefault();
     if (!bid) return;
     setBidSent({ amount: bid, note: bidNote });
+    if (pro && session?.role === "customer") {
+      addHire({ customer: session.username, workerName: pro.name, workerId: pro.id, trade: pro.trade });
+    }
     setBid(""); setBidNote("");
   };
 
