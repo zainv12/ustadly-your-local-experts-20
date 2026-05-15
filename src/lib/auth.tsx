@@ -245,7 +245,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       write(K.suggestions, [{ ...s, id: crypto.randomUUID(), createdAt: Date.now() }, ...list]);
       refresh();
     },
-  }), [session, customers, workers, complaints, urgentBids, suggestions, refresh]);
+    hires,
+    addHire: (h) => {
+      const list = read<Hire[]>(K.hires, []);
+      // dedupe per (customer, workerName)
+      if (list.find((x) => x.customer === h.customer && x.workerName === h.workerName)) { refresh(); return; }
+      write(K.hires, [{ ...h, id: crypto.randomUUID(), createdAt: Date.now() }, ...list]);
+      refresh();
+    },
+  }), [session, customers, workers, complaints, urgentBids, suggestions, hires, refresh]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }
