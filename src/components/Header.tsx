@@ -4,8 +4,6 @@ import { useAuth } from "@/lib/auth";
 
 const links = [
   { to: "/home", label: "Home" },
-  { to: "/search", label: "Search" },
-  { to: "/urgent", label: "Urgent" },
   { to: "/post-job", label: "Post a job" },
   { to: "/history", label: "History" },
   { to: "/complaints", label: "Complaints" },
