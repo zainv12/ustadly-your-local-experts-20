@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Otp = require('../models/Otp');
+const sendEmail = require('../utils/sendEmail');
 
 // REGISTER
 router.post('/register', async (req, res) => {
@@ -18,17 +20,51 @@ router.post('/register', async (req, res) => {
     // Encrypt password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
+    // Create new user (unverified)
     const user = new User({
       name,
       email,
       password: hashedPassword,
-      role
+      role,
+      isVerified: false
     });
 
     await user.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    // Generate 4-digit OTP
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    // Save OTP to database
+    await Otp.create({ email, otp });
+
+    // Send OTP email
+    await sendEmail(email, otp);
+
+    res.status(201).json({ message: 'Registration successful! Please check your email for OTP.' });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+// VERIFY OTP
+router.post('/verify-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    // Find OTP in database
+    const otpRecord = await Otp.findOne({ email, otp });
+    if (!otpRecord) {
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+
+    // Mark user as verified
+    await User.findOneAndUpdate({ email }, { isVerified: true });
+
+    // Delete OTP from database
+    await Otp.deleteOne({ email });
+
+    res.json({ message: 'Email verified successfully! You can now login.' });
 
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
@@ -44,6 +80,11 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Check if verified
+    if (!user.isVerified) {
+      return res.status(400).json({ message: 'Please verify your email first' });
     }
 
     // Check password
