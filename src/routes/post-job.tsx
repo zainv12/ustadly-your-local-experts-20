@@ -72,6 +72,16 @@ function PostJob() {
                   className="w-full rounded-lg bg-navy/60 p-3 text-white outline-none" />
               </Field>
             </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Date needed">
+                <input required type="date" value={neededDate} onChange={(e) => setNeededDate(e.target.value)}
+                  className="w-full rounded-lg bg-navy/60 p-3 text-white outline-none" />
+              </Field>
+              <Field label="Time needed">
+                <input required type="time" value={neededTime} onChange={(e) => setNeededTime(e.target.value)}
+                  className="w-full rounded-lg bg-navy/60 p-3 text-white outline-none" />
+              </Field>
+            </div>
             <button type="submit" className="w-full rounded-full bg-brand px-6 py-3 font-bold text-brand-foreground hover:scale-[1.02] transition">
               {done ? "Posted ✓ Redirecting..." : "Broadcast bid"}
             </button>
