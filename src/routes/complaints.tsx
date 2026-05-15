@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { useAuth } from "@/lib/auth";
 import { professionals } from "@/data/professionals";
-import { useMemo } from "react";
 import { MessageSquareWarning, CheckCircle2, Lightbulb, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/complaints")({
