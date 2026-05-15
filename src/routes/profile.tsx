@@ -4,7 +4,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { useAuth, COUNTRIES, type Customer } from "@/lib/auth";
-import { User, Pencil, ShieldCheck, LogOut, Lock } from "lucide-react";
+import { User, Pencil, ShieldCheck, LogOut, Lock, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/lib/theme";
 
 export const Route = createFileRoute("/profile")({
   component: Profile,
