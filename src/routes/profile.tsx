@@ -88,13 +88,24 @@ function CustomerProfile({
     setEditing(false);
   };
 
+  const { theme, toggle } = useTheme();
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-4xl font-black text-brand">My account</h1>
-        <button onClick={onLogout} className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-white hover:bg-white/25 transition">
-          <LogOut className="h-4 w-4" /> Logout
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={toggle}
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-white hover:bg-white/25 transition"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {theme === "dark" ? "Light mode" : "Dark mode"}
+          </button>
+          <button onClick={onLogout} className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-white hover:bg-white/25 transition">
+            <LogOut className="h-4 w-4" /> Logout
+          </button>
+        </div>
       </div>
 
       <div className="mt-8 rounded-2xl bg-card p-6 animate-float-up">
