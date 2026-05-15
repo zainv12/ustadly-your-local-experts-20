@@ -15,7 +15,7 @@ export type WorkerAccount = {
   country: string; blocked: boolean; earnings: number; verified?: boolean;
 };
 export type Complaint = { id: string; from: string; against: string; subject: string; message: string; createdAt: number; status: "open" | "resolved" };
-export type UrgentBid = { id: string; customer: string; trade: string; title: string; description: string; budget: number; location: string; createdAt: number; status: "open" | "accepted"; acceptedBy?: string };
+export type UrgentBid = { id: string; customer: string; trade: string; title: string; description: string; budget: number; location: string; neededAt?: string; createdAt: number; status: "open" | "accepted"; acceptedBy?: string };
 export type Suggestion = { id: string; from: string; kind: "suggestion" | "feedback"; message: string; createdAt: number };
 export type Session = { role: Role; username: string } | null;
 

@@ -1,10 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { useAuth } from "@/lib/auth";
 import { categories } from "@/data/professionals";
-import { Megaphone } from "lucide-react";
+import { Megaphone, Siren } from "lucide-react";
 
 export const Route = createFileRoute("/post-job")({
   component: PostJob,
@@ -19,12 +19,15 @@ function PostJob() {
   const [description, setDescription] = useState("");
   const [budget, setBudget] = useState<number>(2000);
   const [location, setLocation] = useState("");
+  const [neededDate, setNeededDate] = useState("");
+  const [neededTime, setNeededTime] = useState("");
   const [done, setDone] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const customer = session?.username ?? "Guest";
-    postUrgentBid({ customer, trade, title, description, budget: Number(budget) || 0, location });
+    const neededAt = neededDate ? `${neededDate}${neededTime ? "T" + neededTime : ""}` : undefined;
+    postUrgentBid({ customer, trade, title, description, budget: Number(budget) || 0, location, neededAt });
     setDone(true);
     setTimeout(() => navigate({ to: "/urgent" }), 900);
   };
@@ -34,9 +37,14 @@ function PostJob() {
       <Header />
       <ToolsBackground overlay="bg-navy/75">
         <div className="mx-auto max-w-3xl px-6 py-12">
-          <h1 className="font-display text-5xl font-black text-brand inline-flex items-center gap-3">
-            <Megaphone className="h-9 w-9" /> Post a job
-          </h1>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h1 className="font-display text-5xl font-black text-brand inline-flex items-center gap-3">
+              <Megaphone className="h-9 w-9" /> Post a job
+            </h1>
+            <Link to="/urgent" className="inline-flex items-center gap-2 rounded-full bg-brand/20 px-4 py-2 font-semibold text-brand hover:bg-brand hover:text-brand-foreground transition">
+              <Siren className="h-4 w-4" /> View urgent jobs
+            </Link>
+          </div>
           <p className="mt-2 text-white/80">Broadcast an urgent job. Any qualified worker can accept the bid.</p>
 
           <form onSubmit={submit} className="mt-8 space-y-4 rounded-2xl bg-card p-6">
@@ -61,6 +69,16 @@ function PostJob() {
               </Field>
               <Field label="Location">
                 <input required value={location} onChange={(e) => setLocation(e.target.value)} placeholder="City, area"
+                  className="w-full rounded-lg bg-navy/60 p-3 text-white outline-none" />
+              </Field>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Date needed">
+                <input required type="date" value={neededDate} onChange={(e) => setNeededDate(e.target.value)}
+                  className="w-full rounded-lg bg-navy/60 p-3 text-white outline-none" />
+              </Field>
+              <Field label="Time needed">
+                <input required type="time" value={neededTime} onChange={(e) => setNeededTime(e.target.value)}
                   className="w-full rounded-lg bg-navy/60 p-3 text-white outline-none" />
               </Field>
             </div>

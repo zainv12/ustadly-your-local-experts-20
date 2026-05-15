@@ -4,7 +4,7 @@ import { ToolsBackground } from "@/components/ToolsBackground";
 import { ProfessionalCard } from "@/components/ProfessionalCard";
 import { professionals } from "@/data/professionals";
 import { useAuth } from "@/lib/auth";
-import { MapPin, Clock, Megaphone, CheckCircle2 } from "lucide-react";
+import { MapPin, Clock, Megaphone, CheckCircle2, CalendarClock } from "lucide-react";
 
 export const Route = createFileRoute("/urgent")({
   component: Urgent,
@@ -53,6 +53,9 @@ function Urgent() {
                     <p className="mt-2 text-sm text-white/80">{b.description}</p>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/60">
                       <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{b.location}</span>
+                      {b.neededAt && (
+                        <span className="inline-flex items-center gap-1 text-brand"><CalendarClock className="h-3 w-3" />Needed {new Date(b.neededAt).toLocaleString()}</span>
+                      )}
                       <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{new Date(b.createdAt).toLocaleString()}</span>
                       <span>by <span className="text-white/80">{b.customer}</span></span>
                     </div>
