@@ -9,7 +9,7 @@ const sendEmail = require('../utils/sendEmail');
 // REGISTER
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, username, email, password, phone, country, role, cnic } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -17,15 +17,25 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Email already registered' });
     }
 
+    // Check if username already exists
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ message: 'Username already taken' });
+    }
+
     // Encrypt password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user (unverified)
+    // Create new user
     const user = new User({
       name,
+      username,
       email,
       password: hashedPassword,
+      phone,
+      country,
       role,
+      cnic: role === 'worker' ? cnic : undefined,
       isVerified: false
     });
 
