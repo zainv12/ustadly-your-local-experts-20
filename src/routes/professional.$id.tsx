@@ -15,7 +15,7 @@ type Msg = { from: "you" | "pro"; text: string; time: string };
 function ProfessionalPage() {
   const { id } = useParams({ from: "/professional/$id" });
   const pro = professionals.find((p) => p.id === id);
-  const { session } = useAuth();
+  const { session, addHire } = useAuth();
 
   const [bid, setBid] = useState("");
   const [bidNote, setBidNote] = useState("");
