@@ -92,13 +92,25 @@ function Complaints() {
             <div className="mt-8 rounded-2xl bg-card p-6 text-white">
               Please <Link to="/login" className="text-brand underline">login</Link> to file a complaint. (You can still send suggestions or feedback below.)
             </div>
+          ) : session.role !== "customer" ? (
+            <div className="mt-8 rounded-2xl bg-card p-6 text-white">
+              Only customers can file complaints against workers.
+            </div>
+          ) : hireableWorkers.length === 0 ? (
+            <div className="mt-8 rounded-2xl bg-card p-6 text-white">
+              You can only complain about workers you have hired. <Link to="/home" className="text-brand underline">Hire a worker</Link> first, then return here.
+            </div>
           ) : (
             <form onSubmit={submit} className="mt-8 rounded-2xl bg-card p-6 space-y-4 animate-float-up">
               <div>
-                <label className="mb-1 block text-sm text-white/80">Worker</label>
+                <label className="mb-1 block text-sm text-white/80">Worker (from your hire history)</label>
                 <select value={against} onChange={(e) => setAgainst(e.target.value)} className="w-full rounded-full bg-navy/60 px-5 py-3 text-white outline-none">
                   <option value="">Select a worker…</option>
-                  {professionals.map((p) => <option key={p.id} value={p.name} className="text-navy">{p.name} — {p.trade}</option>)}
+                  {hireableWorkers.map((w) => (
+                    <option key={w.name} value={w.name} className="text-navy">
+                      {w.name}{w.trade ? ` — ${w.trade}` : ""}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
