@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ToolsBackground } from "@/components/ToolsBackground";
 import { useAuth } from "@/lib/auth";
-import { professionals } from "@/data/professionals";
+
 import { MessageSquareWarning, CheckCircle2, Lightbulb, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/complaints")({
