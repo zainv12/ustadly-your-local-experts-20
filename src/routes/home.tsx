@@ -48,7 +48,7 @@ function Home() {
   return (
     <div>
       <Header />
-      <div className="relative h-[70vh] w-full overflow-hidden">
+      <div className="relative h-[64vh] min-h-[430px] w-full overflow-hidden sm:h-[70vh]">
         {HERO_SLIDES.map((s, i) => (
           <img
             key={s.src}
@@ -61,16 +61,16 @@ function Home() {
         ))}
         <div className="absolute inset-0 bg-gradient-to-b from-navy/40 via-navy/30 to-navy" />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-          <h1 className="font-display text-5xl md:text-7xl font-black text-brand text-shadow-glow animate-float-up">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center sm:px-6">
+          <h1 className="font-display text-4xl font-black text-brand text-shadow-glow animate-float-up sm:text-5xl md:text-7xl">
             Find Your Pro
           </h1>
 
-          <div className="mt-8 w-full max-w-2xl glass-card rounded-full p-2 flex items-center gap-2 animate-float-up delay-200">
+          <div className="mt-8 flex w-full max-w-2xl animate-float-up flex-col gap-2 rounded-2xl p-2 glass-card delay-200 sm:flex-row sm:items-center sm:rounded-full">
             <select
               value={picked}
               onChange={(e) => setPicked(e.target.value as Category)}
-              className="flex-1 rounded-full bg-transparent px-5 py-3 text-white outline-none"
+              className="min-w-0 flex-1 rounded-full bg-transparent px-5 py-3 text-white outline-none"
             >
               <option value="" className="text-navy">What do you need?</option>
               {categories.map((c) => (
@@ -79,7 +79,7 @@ function Home() {
             </select>
             <button
               onClick={go}
-              className="flex items-center gap-2 rounded-full bg-brand px-6 py-3 font-semibold text-brand-foreground transition hover:scale-105"
+              className="flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 font-semibold text-brand-foreground transition hover:scale-105"
             >
               <Search className="h-4 w-4" /> Search
             </button>

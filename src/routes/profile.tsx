@@ -72,6 +72,7 @@ function CustomerProfile({
 }: { me?: Customer; onSave: (p: Partial<Customer>) => void; onLogout: () => void }) {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Customer | null>(null);
+  const { theme, toggle } = useTheme();
 
   useEffect(() => { if (me) setForm({ ...me }); }, [me]);
 
@@ -88,7 +89,6 @@ function CustomerProfile({
     setEditing(false);
   };
 
-  const { theme, toggle } = useTheme();
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
       <div className="flex flex-wrap items-center justify-between gap-3">

@@ -27,8 +27,8 @@ function Login() {
 
   return (
     <ToolsBackground overlay="bg-navy/70">
-      <form onSubmit={onSubmit} className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 px-6">
-        <h1 className="text-center font-display text-5xl font-black text-brand text-shadow-glow">Ustaadly.</h1>
+      <form onSubmit={onSubmit} className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-6 px-4 py-12 sm:px-6">
+        <h1 className="text-center font-display text-4xl font-black text-brand text-shadow-glow sm:text-5xl">Ustaadly.</h1>
         {err && <p className="text-center text-destructive">{err}</p>}
         <label className="block animate-float-up">
           <span className="mb-2 block text-center text-sm text-white/80">Username</span>

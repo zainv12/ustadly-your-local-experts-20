@@ -23,8 +23,8 @@ function SearchPage() {
     <div>
       <Header />
       <ToolsBackground overlay="bg-navy/70">
-        <div className="mx-auto max-w-6xl px-6 py-12">
-          <h1 className="font-display text-5xl font-black text-white mb-8">Search</h1>
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+          <h1 className="mb-6 font-display text-4xl font-black text-white sm:mb-8 sm:text-5xl">Search</h1>
           <div className="relative max-w-2xl">
             <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
             <input
@@ -34,7 +34,7 @@ function SearchPage() {
               className="input-glow w-full rounded-full bg-white/20 py-4 pl-14 pr-6 text-white placeholder-white/60 outline-none"
             />
           </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-5 sm:mt-10 sm:gap-6">
             {filtered.map((p, i) => (
               <div key={p.id} className="animate-float-up" style={{ animationDelay: `${i * 60}ms` }}>
                 <ProfessionalCard pro={p} />

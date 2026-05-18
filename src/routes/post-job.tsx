@@ -36,18 +36,18 @@ function PostJob() {
     <div>
       <Header />
       <ToolsBackground overlay="bg-navy/75">
-        <div className="mx-auto max-w-3xl px-6 py-12">
+        <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h1 className="font-display text-5xl font-black text-brand inline-flex items-center gap-3">
-              <Megaphone className="h-9 w-9" /> Post a job
+            <h1 className="inline-flex items-center gap-3 font-display text-4xl font-black text-brand sm:text-5xl">
+              <Megaphone className="h-8 w-8 sm:h-9 sm:w-9" /> Post a job
             </h1>
-            <Link to="/urgent" className="inline-flex items-center gap-2 rounded-full bg-brand/20 px-4 py-2 font-semibold text-brand hover:bg-brand hover:text-brand-foreground transition">
+            <Link to="/urgent" className="inline-flex items-center gap-2 rounded-full bg-brand/20 px-4 py-2 text-sm font-semibold text-brand hover:bg-brand hover:text-brand-foreground transition sm:text-base">
               <Siren className="h-4 w-4" /> View urgent jobs
             </Link>
           </div>
           <p className="mt-2 text-white/80">Broadcast an urgent job. Any qualified worker can accept the bid.</p>
 
-          <form onSubmit={submit} className="mt-8 space-y-4 rounded-2xl bg-card p-6">
+          <form onSubmit={submit} className="mt-8 space-y-4 rounded-xl bg-card p-4 sm:p-6">
             <Field label="Trade needed">
               <select value={trade} onChange={(e) => setTrade(e.target.value)} className="w-full rounded-lg bg-navy/60 p-3 text-white outline-none">
                 {categories.map((c) => <option key={c} value={c}>{c}</option>)}

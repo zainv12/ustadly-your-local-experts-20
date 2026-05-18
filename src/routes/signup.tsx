@@ -33,8 +33,8 @@ function Signup() {
 
   return (
     <ToolsBackground overlay="bg-navy/70">
-      <form onSubmit={submit} className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center gap-6 px-6 py-16">
-        <h1 className="text-center font-display text-5xl font-black text-brand text-shadow-glow">Create account</h1>
+      <form onSubmit={submit} className="mx-auto flex min-h-screen w-full max-w-3xl flex-col justify-center gap-6 px-4 py-12 sm:px-6 sm:py-16">
+        <h1 className="text-center font-display text-4xl font-black text-brand text-shadow-glow sm:text-5xl">Create account</h1>
         {error && <p className="text-center text-destructive">{error}</p>}
 
         <label className="block">

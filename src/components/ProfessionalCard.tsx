@@ -7,13 +7,13 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
     <Link
       to="/professional/$id"
       params={{ id: pro.id }}
-      className="group flex shrink-0 w-[340px] items-center gap-5 rounded-2xl bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand/20"
+      className="group flex w-full min-w-0 items-center gap-4 rounded-xl bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand/20 sm:gap-5 sm:p-5"
     >
-      <img src={pro.photo} alt={pro.name} loading="lazy" width={96} height={96} className="h-24 w-24 rounded-full object-cover ring-2 ring-white/20" />
-      <div className="flex-1">
-        <h3 className="text-lg font-bold text-white">{pro.name}</h3>
+      <img src={pro.photo} alt={pro.name} loading="lazy" width={96} height={96} className="h-20 w-20 shrink-0 rounded-full object-cover ring-2 ring-white/20 sm:h-24 sm:w-24" />
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate text-base font-bold text-white sm:text-lg">{pro.name}</h3>
         <p className="text-sm italic text-white/70">certified</p>
-        <p className="text-base font-semibold text-white">{pro.trade}</p>
+        <p className="truncate text-sm font-semibold text-white sm:text-base">{pro.trade}</p>
         <p className="mt-2 text-xs text-white/60">Ratings</p>
         <div className="flex gap-0.5">
           {Array.from({ length: 5 }).map((_, i) => (

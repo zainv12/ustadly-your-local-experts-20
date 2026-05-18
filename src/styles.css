@@ -74,47 +74,121 @@
   --foreground: oklch(0.98 0 0);
 }
 
-/* Light theme: flips the navy/card surfaces and base text. Existing
-   text-white / bg-white utilities are remapped via overrides below so the
-   majority of the UI inverts cleanly. */
 .light {
-  --navy: oklch(0.97 0.01 250);
-  --navy-light: oklch(0.92 0.02 250);
-  --header: oklch(0.22 0.06 260);
-  --background: oklch(0.98 0.005 250);
-  --foreground: oklch(0.18 0.05 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.05 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.05 260);
-  --secondary: oklch(0.9 0.02 250);
+  --navy: oklch(0.23 0.05 258);
+  --navy-light: oklch(0.46 0.035 250);
+  --header: oklch(0.988 0.006 245 / 92%);
+  --brand: oklch(0.78 0.17 78);
+  --background: oklch(0.982 0.008 235);
+  --foreground: oklch(0.19 0.04 258);
+  --card: oklch(0.998 0.003 235);
+  --card-foreground: oklch(0.19 0.04 258);
+  --popover: oklch(0.998 0.003 235);
+  --popover-foreground: oklch(0.19 0.04 258);
+  --secondary: oklch(0.945 0.012 235);
   --secondary-foreground: oklch(0.18 0.05 260);
-  --muted: oklch(0.94 0.01 250);
-  --muted-foreground: oklch(0.4 0.03 250);
-  --border: oklch(0.18 0.05 260 / 12%);
-  --input: oklch(0.18 0.05 260 / 10%);
-  --brand-foreground: oklch(0.18 0.05 260);
+  --muted: oklch(0.95 0.01 235);
+  --muted-foreground: oklch(0.44 0.025 255);
+  --border: oklch(0.2 0.04 258 / 13%);
+  --input: oklch(0.2 0.04 258 / 11%);
+  --brand-foreground: oklch(0.16 0.04 258);
+  --ring: oklch(0.74 0.16 78);
 }
 
-/* Map hard-coded white text and translucent white surfaces to dark
-   equivalents in light mode so the site reads correctly without rewriting
-   every component. */
-.light .text-white { color: oklch(0.18 0.05 260); }
+/* Light mode keeps navy as an anchor while converting translucent utilities
+   into quiet paper surfaces with clear contrast. */
+.tools-surface {
+  background-color: var(--color-background);
+  background-image: var(--tools-bg);
+  background-size: 700px;
+  background-repeat: repeat;
+}
+.light body {
+  background:
+    linear-gradient(180deg, oklch(0.99 0.004 235), oklch(0.965 0.01 235));
+}
+.light .tools-surface {
+  background-color: oklch(0.975 0.008 235);
+  background-image:
+    linear-gradient(180deg, oklch(1 0 0 / 84%), oklch(0.95 0.011 235 / 90%)),
+    var(--tools-bg);
+  background-size: auto, 760px;
+}
+.light .text-white { color: oklch(0.2 0.04 258); }
 .light .text-white\/80,
-.light .text-white\/85,
-.light .text-white\/70 { color: oklch(0.32 0.04 260); }
+.light .text-white\/85 { color: oklch(0.31 0.035 258); }
+.light .text-white\/70 { color: oklch(0.42 0.028 258); }
 .light .text-white\/60,
 .light .text-white\/50,
-.light .text-white\/40 { color: oklch(0.5 0.03 260); }
-.light .bg-white\/15 { background-color: oklch(0.18 0.05 260 / 8%); }
-.light .bg-white\/25 { background-color: oklch(0.18 0.05 260 / 14%); }
-.light .hover\:bg-white\/10:hover { background-color: oklch(0.18 0.05 260 / 6%); }
-.light .hover\:bg-white\/25:hover { background-color: oklch(0.18 0.05 260 / 14%); }
-.light .ring-white\/20 { --tw-ring-color: oklch(0.18 0.05 260 / 15%); }
+.light .text-white\/40 { color: oklch(0.56 0.022 258); }
+.light .text-brand { color: oklch(0.63 0.15 78); }
+.light .bg-card {
+  background:
+    linear-gradient(180deg, oklch(1 0 0 / 98%), oklch(0.988 0.004 235 / 98%));
+  border: 1px solid oklch(0.2 0.04 258 / 10%);
+  box-shadow: 0 22px 55px oklch(0.22 0.05 258 / 10%), 0 2px 8px oklch(0.22 0.05 258 / 6%);
+}
+.light .bg-navy\/75,
+.light .bg-navy\/70,
+.light .bg-navy\/55,
+.light .bg-navy\/40 {
+  background:
+    linear-gradient(135deg, oklch(0.995 0.004 235 / 78%), oklch(0.925 0.014 235 / 72%));
+}
+.light .bg-navy\/60,
+.light .bg-navy\/40 {
+  background-color: oklch(0.955 0.012 235 / 94%);
+  border: 1px solid oklch(0.2 0.04 258 / 9%);
+}
+.light .bg-white\/15 {
+  background-color: oklch(1 0 0 / 82%);
+  border: 1px solid oklch(0.2 0.04 258 / 10%);
+  box-shadow: 0 10px 24px oklch(0.22 0.05 258 / 7%);
+}
+.light .bg-white\/20,
+.light .bg-white\/25,
+.light .bg-white\/30 {
+  background-color: oklch(1 0 0 / 88%);
+  border: 1px solid oklch(0.2 0.04 258 / 11%);
+}
+.light .hover\:bg-white\/10:hover,
+.light .hover\:bg-white\/20:hover,
+.light .hover\:bg-white\/25:hover,
+.light .hover\:bg-white\/40:hover { background-color: oklch(0.935 0.014 235 / 92%); }
+.light .ring-white\/20 { --tw-ring-color: oklch(0.2 0.04 258 / 15%); }
 .light .border-white\/10,
 .light .border-white\/15,
 .light .border-white\/20,
-.light .border-white\/30 { border-color: oklch(0.18 0.05 260 / 15%); }
+.light .border-white\/30 { border-color: oklch(0.2 0.04 258 / 15%); }
+.light .fill-white\/15 { fill: oklch(0.82 0.01 235); }
+.light .text-white\/15 { color: oklch(0.82 0.01 235); }
+.light .placeholder-white\/60::placeholder { color: oklch(0.54 0.022 258); }
+.light select,
+.light input,
+.light textarea {
+  color: oklch(0.2 0.04 258);
+}
+.light select:focus,
+.light input:focus,
+.light textarea:focus {
+  box-shadow: 0 0 0 3px oklch(0.74 0.16 78 / 22%), 0 12px 32px oklch(0.22 0.05 258 / 8%);
+}
+.light .input-glow { box-shadow: 0 12px 32px oklch(0.22 0.05 258 / 9%); }
+.light .glass-card {
+  background:
+    linear-gradient(180deg, oklch(1 0 0 / 78%), oklch(0.96 0.01 235 / 74%));
+  border-color: oklch(0.2 0.04 258 / 12%);
+  box-shadow: 0 20px 48px oklch(0.22 0.05 258 / 11%);
+}
+.light header {
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid oklch(0.2 0.04 258 / 10%);
+  box-shadow: 0 10px 30px oklch(0.22 0.05 258 / 7%);
+}
+.light footer.bg-navy {
+  background:
+    linear-gradient(180deg, oklch(0.25 0.05 258), oklch(0.18 0.045 258));
+}
 
 @layer base {
   * { border-color: var(--color-border); }
@@ -122,6 +196,7 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    overflow-x: hidden;
   }
   .font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
 }
